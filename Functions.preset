@@ -45,8 +45,8 @@ FileExplorerWithThisPC
 FileExplorerExpandRibbon
 DisableMaintenanceWakeUp
 DisableStorageSense
-UnpinStartMenuTiles
-Remove-TaskbarPinningApp
+#UnpinStartMenuTiles
+$Remove-TaskbarPinningApp
 DisableAdobeFlash
 DisableEdgePreload
 DisableIEFirstRun
@@ -55,16 +55,16 @@ ShowKnownExtensions
 DisableActionCenter
 DisableRestorePoints
 SetUACLow
-#Sfc
+Sfc
 RemoveTasks
 DiskClean
-#DisableDefragmentation
+DisableDefragmentation
 EnableClearRecentFiles
 DisableRecentFiles
 DisableSearchAppInStore
 HideRecentlyAddedApps
 DisableServices
-SetWallpaper
+#SetWallpaper
 ShowAllIcons
 CopyFiles
 ImportStartup
@@ -112,7 +112,7 @@ UninstallFaxAndScan
 
 ### Install Softwares ###
 Winget
-InstallSoftwares
+#InstallSoftwares
 
 ### Restart ###
 Restart
