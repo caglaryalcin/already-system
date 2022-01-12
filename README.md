@@ -17,13 +17,13 @@ This script does exactly the following;
 - Setting Control Panel View to Large Icons
 - Enabling NumLock After Startup
 - Disabling IPv6 stack
-- Disabling Virtual Ethernet Adapters
 - Disabling Startup Apps
 - Setting Cloud Flare DNS
 - Hiding People Icon from Taskbar
 - Hiding Taskview Icon from Taskbar
 - Hiding MultiTaskview Icon from Taskbar
 - Showing Small Icons in Taskbar
+- Hiding Taskbar Search
 - Removing Chat from Taskbar
 - Removing Widgets from Taskbar
 - Taskbar Aligns Left (For Windows 11)
