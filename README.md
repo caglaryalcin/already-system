@@ -44,7 +44,6 @@ This script does exactly the following;
 - Expanding for File Explorer
 - Disabling Nightly Wake-up for Automatic Maintenance
 - Disabling Storage Sense
-- Unpinning all Start Menu tiles
 - Disabling Built-in Adobe Flash in IE and Edge
 - Disabling Edge Preload
 - Disabling Internet Explorer First Run Wizard
@@ -62,7 +61,6 @@ This script does exactly the following;
 - Disabling Search for App in Store for Unknown Extensions
 - Hiding 'Recently added' List from the Start Menu
 - Stopping and Disabling Unnecessary Services
-- Setting Desktop Wallpaper
 - Show All Icons on Taskbar
 - Copy Files to Documents
 - Importing Startup task in Task Scheduler
@@ -112,7 +110,6 @@ This script does exactly the following;
 <details><summary>Install Softwares</summary>&nbsp;
 
 - [Installing WinGet for Windows 10](https://github.com/caglaryalcin/after-format/blob/main/README.md#startup-script)
-- Installing Latest Version Brave Browser
 </details>
   
 > **_NOTE 1:_** Before executing the script, add # at the beginning of the line you don't want from file 'Functions.Preset'.
