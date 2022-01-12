@@ -2,7 +2,7 @@
 
 If you're already using a system, you can run this script.
 
-After downloading the [zip](https://github.com/caglaryalcin/already-system/archive/refs/heads/main.zip) file, move the 'after-format-main' file inside the zip to 'C:\'. Then double click(don't right click and 'run as administrator') on 'Run.cmd' confirm User Account Control prompt. Make sure your account is a member of Administrators group as the script attempts to run with elevated privileges.
+After downloading the [zip](https://github.com/caglaryalcin/already-system/archive/refs/heads/main.zip) file, move the 'already-system-main' folder inside the zip to 'C:\'. Then double click(don't right click and 'run as administrator') on 'Run.cmd' confirm User Account Control prompt. Make sure your account is a member of Administrators group as the script attempts to run with elevated privileges.
 
 This script does exactly the following;
 
@@ -114,7 +114,7 @@ This script does exactly the following;
   
 > **_NOTE 1:_** Before executing the script, add # at the beginning of the line you don't want from file 'Functions.Preset'.
 
-> **_NOTE 2:_** All the script is all set to path 'C:\', so file 'after-format-main' must be inside 'C:\'.
+> **_NOTE 2:_** All the script is all set to path 'C:\', so file 'already-system-main' must be inside 'C:\'.
   
 > **_NOTE 3:_** After run this script, you can check useful tools from in Documents.
   
