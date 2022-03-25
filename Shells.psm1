@@ -1880,16 +1880,3 @@ Function InstallSoftwares {
 ##########
 #endregion Install Software
 ##########
-
-##########
-#region Restart
-##########
-
-Function Restart {
-    Write-Host `n"Restarting Pc in 30 seconds..." -NoNewline
-    Restart-Computer
-}
-
-##########
-#endregion Restart
-##########
