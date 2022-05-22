@@ -127,9 +127,9 @@ This script does exactly the following;
 - Sync Windows Localtime
 - Update apps (browsers, apps, softwares and such..) with WinGet&nbsp;
   
-> **_NOTE 1:_** You can put '#' at the beginning of the functions you want to add or remove in the functions.preset file in 'C:\after-format-main\files\startup' folder.
+> **_NOTE 1:_** You can put '#' at the beginning of the functions you want to add or remove in the functions.preset file in 'C:\already-system-main\files\startup' folder.
   
-  If you don't want to use startup updates, you can as below edit 'run.vbs' file in 'C:\after-format-main\files\startup' folder.
+  If you don't want to use startup updates, you can as below edit 'run.vbs' file in 'C:\already-system-main\files\startup' folder.
 ```vbs
 Set WshShell = CreateObject("WScript.Shell") 
 WshShell.Run chr(34) & "C:\startup\Run.cmd" & Chr(34), 0
