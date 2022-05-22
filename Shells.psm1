@@ -24,8 +24,12 @@ Function Info {
 
 Function Priority {
     $progressPreference = 'silentlyContinue'
-    Get-WindowsPackage -Online | Where PackageName -like *QuickAssist* | Remove-WindowsPackage -Online -NoRestart -WarningAction SilentlyContinue | Out-Null
+    Get-WindowsPackage -Online | Where PackageName -like *QuickAssist*15** | Remove-WindowsPackage -Online -NoRestart -WarningAction SilentlyContinue *>$null
 }
+
+RequireAdmin
+Info
+Priority
 
 ##########
 #endregion Priority
@@ -35,21 +39,41 @@ Function Priority {
 #region System Settings
 ##########
 
+Write-Host `n"Do you want " -NoNewline
+Write-Host "System Settings?" -ForegroundColor Yellow -NoNewline
+Write-Host "(y/n): " -ForegroundColor Green -NoNewline
+$systemset = Read-Host
+
+if ($systemset -match "[Yy]") {
+
+Write-Host `n"---------Adjusting System Settings" -ForegroundColor Blue -BackgroundColor Black
+
 #Set TR Formatss
 Function TRFormats {
-    Write-Host `n"---------Adjusting System Settings" -ForegroundColor Blue -BackgroundColor Black
-
-    Write-Host `n"Setting date format of Turkey..." -NoNewline
+    Write-Host `n"Do you want to adjust the keyboard settings according to " -NoNewline
+    Write-Host "Turkey?" -ForegroundColor Yellow -NoNewline
+    Write-Host "(y/n): " -ForegroundColor Green -NoNewline
+    $input = Read-Host
+    if ($input -match "[Yy]") {
+    Write-Host "Setting date format of Turkey..." -NoNewline
     Set-TimeZone -Name "Turkey Standard Time"
     Set-Culture tr-TR
     Set-ItemProperty -Path "HKCU:\Control Panel\International" -name ShortDate -value "dd/MM/yyyy"
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+else {
+    Write-Host 'Turkish keyboard adjustment has been canceled' -ForegroundColor Red -BackgroundColor Black
+}
+}
+
+TRFormats
 
 #Default .ps1 file for Powershell
 Function Defaultps1 {
     reg import "C:\already-system-main\files\default_ps.reg" *>$null
 }
+
+Defaultps1
 
 #Get the Old Classic Right-Click Context Menu for Windows 11
 Function RightClickMenu {
@@ -60,6 +84,8 @@ Function RightClickMenu {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+RightClickMenu
+
 #Turn Off News and Interest
 Function DisableNews {
     Write-Host "Disabling News and Interes on Taskbar..." -NoNewline
@@ -68,12 +94,16 @@ Function DisableNews {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+DisableNews
+
 #Default Photo Viewer Old
 Function DefaultPhotoViewer {
     Write-Host "Default Old Photo Viewer..." -NoNewline
     reg import "C:\already-system-main\files\default_foto.reg" *>$null
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+DefaultPhotoViewer
 
 # Set Dark Mode for Applications
 Function SetAppsDarkMode {
@@ -82,12 +112,16 @@ Function SetAppsDarkMode {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+SetAppsDarkMode
+
 # Set Dark Mode for System - Applicable since 1903
 Function SetSystemDarkMode {
 	Write-Host "Setting Dark Mode for System..." -NoNewline
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Type DWord -Value 0
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+SetSystemDarkMode
 
 # Set Control Panel view to Large icons (Classic)
 Function SetControlPanelLargeIcons {
@@ -99,6 +133,8 @@ Function SetControlPanelLargeIcons {
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel" -Name "AllItemsIconView" -Type DWord -Value 0
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+SetControlPanelLargeIcons
 
 # Enable NumLock after startup
 Function EnableNumlock {
@@ -115,13 +151,36 @@ Function EnableNumlock {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+EnableNumlock
+
+# Set Hostname
+Function SetHostname {
+    Write-Host "Do you want change your " -NoNewline
+    Write-Host "hostname?" -ForegroundColor Yellow -NoNewline
+    Write-Host "(y/n): " -ForegroundColor Green -NoNewline
+    $input = Read-Host
+    if ($input -match "[Yy]") {
+    $hostq = Write-Host "Please enter your hostname:" -ForegroundColor White -BackgroundColor Red -NoNewline
+    $hostname = Read-Host -Prompt $hostq
+    Rename-Computer -NewName "$hostname" *>$null
+    Write-Host "Hostname was set to"$hostname"" -ForegroundColor Yellow -BackgroundColor Black
+    }
+else {
+    Write-Host "[The Process Cancelled]" -ForegroundColor Red -BackgroundColor Black
+}
+}
+
+SetHostname
+
 # Disable Windows Beep Sound
 Function DisableBeepSound {
-	Write-Host "Disabling Windows Beep Sound..." -NoNewline
+	Write-Host `n"Disabling Windows Beep Sound..." -NoNewline
 	Set-ItemProperty -Path "HKCU:\Control Panel\Sound" -Name "Beep" -Type String -Value no
     Set-Service beep -StartupType disabled *>$null
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+DisableBeepSound
 
 # Disable IPv6 stack for all installed network interfaces 
 Function DisableIPv6 {
@@ -130,6 +189,8 @@ Function DisableIPv6 {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+DisableIPv6
+
 # Disable VMware and VirtualBox Ethernet Adapters 
 Function DisableVMEthernets {
 	Write-Host "Disabling Virtual Ethernet Adapters..." -NoNewline
@@ -137,6 +198,8 @@ Function DisableVMEthernets {
     Disable-NetAdapter -Name "*Virtual*" -Confirm:$false *>$null
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+#DisableVMEthernets
 
 # Disable Startup App 
 Function DisableStartupApps {
@@ -153,6 +216,8 @@ Function DisableStartupApps {
 
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+DisableStartupApps
 
 # Disable IPv6 stack for all installed network interfaces 
 Function SetCFDNS {
@@ -174,6 +239,8 @@ Function SetCFDNS {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black        
 }
 
+SetCFDNS
+
 # Hide Taskbar People icon
 Function HideTaskbarPeopleIcon {
 	Write-Host "Hiding People Icon from Taskbar..." -NoNewline
@@ -184,12 +251,16 @@ Function HideTaskbarPeopleIcon {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+HideTaskbarPeopleIcon
+
 # Hide Taskbar Taskview icon
 Function HideTaskbarTaskviewIcon {
 	Write-Host "Hiding Taskview Icon from Taskbar..." -NoNewline
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Type DWord -Value 0
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+HideTaskbarTaskviewIcon
 
 # Hide Taskbar MultiTaskview icon
 Function HideTaskbarMultiTaskviewIcon {
@@ -205,12 +276,16 @@ Function HideTaskbarMultiTaskviewIcon {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+HideTaskbarMultiTaskviewIcon
+
 # Show small icons in taskbar
 Function ShowSmallTaskbarIcons {
 	Write-Host "Showing Small Icons in Taskbar..." -NoNewline
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSmallIcons" -Type DWord -Value 1
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+ShowSmallTaskbarIcons
 
 # Hide Taskbar Search icon / box
 Function HideTaskbarSearch {
@@ -219,12 +294,16 @@ Function HideTaskbarSearch {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+HideTaskbarSearch
+
 # Hide Taskbar Remove Chat from the Taskbar
 Function RemoveTaskbarChat {
 	Write-Host "Removing Chat from Taskbar..." -NoNewline
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\" -Name "TaskbarMn" -Type DWord -Value 0
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+RemoveTaskbarChat
 
 # Hide Taskbar Remove Widgets from the Taskbar
 Function RemoeTaskbarWidgets {
@@ -233,12 +312,16 @@ Function RemoeTaskbarWidgets {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+RemoeTaskbarWidgets
+
 # Hide Taskbar Start button alignment left
 Function TaskbarAlignLeft {
 	Write-Host "Taskbar Aligns Left..." -NoNewline
 	New-itemproperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "0" -PropertyType Dword *>$null
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+TaskbarAlignLeft
 
 # Hide Recycle Bin shortcut from desktop
 Function HideRecycleBinFromDesktop {
@@ -254,12 +337,16 @@ Function HideRecycleBinFromDesktop {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+HideRecycleBinFromDesktop
+
 # Disable Hiberfil - fast windows startup (with ssd) 
 Function DisableHiberfil {
 	Write-Host "Disabling hiberfil.sys..." -NoNewline
     powercfg -h off
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black        
 }
+
+DisableHiberfil
 
 # Disable Display and Sleep mode timeouts 
 Function DisableSleepTimeout {
@@ -271,6 +358,8 @@ Function DisableSleepTimeout {
     powercfg /X standby-timeout-ac 0
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
+
+DisableSleepTimeout
 
 Function DisableDefender {
 	Write-Host "Disabling Windows Defender..." -NoNewline
@@ -343,6 +432,8 @@ Function DisableDefender {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+#DisableDefender
+
 Function HideDefenderTrayIcon {
 	Write-Host "Hiding Windows Defender SysTray icon..." -NoNewline
 	If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Systray")) {
@@ -357,6 +448,8 @@ Function HideDefenderTrayIcon {
 	Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+#HideDefenderTrayIcon
+
 # Disable receiving updates for other Microsoft products via Windows Update
 Function DisableUpdateMSProducts {
 	Write-Host "Disabling Updates for Other Microsoft Products..." -NoNewline
@@ -365,6 +458,8 @@ Function DisableUpdateMSProducts {
 	}
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
+
+DisableUpdateMSProducts
 
 # Disable Cortana 
 Function DisableCortana {
@@ -394,6 +489,8 @@ Function DisableCortana {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+DisableCortana
+
 # Disable Web Search in Start Menu
 Function DisableWebSearch {
 	Write-Host "Disabling Bing Search in Start Menu..." -NoNewline
@@ -406,6 +503,8 @@ Function DisableWebSearch {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+DisableWebSearch
+
 # Disable SmartScreen Filter 
 Function DisableSmartScreen {
 	Write-Host "Disabling SmartScreen Filter..." -NoNewline
@@ -417,6 +516,8 @@ Function DisableSmartScreen {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+DisableSmartScreen
+
 # Disable sensor features, such as screen auto rotation 
 Function DisableSensors {
 	Write-Host "Disabling Sensors..." -NoNewline
@@ -426,6 +527,8 @@ Function DisableSensors {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors" -Name "DisableSensors" -Type DWord -Value 1
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
+
+DisableSensors
 
 # Disable Tailored Experiences 
 Function DisableTailoredExperiences {
@@ -437,6 +540,8 @@ Function DisableTailoredExperiences {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+DisableTailoredExperiences
+
 # Disable XBox GameBar (Win+G) 
 Function DisableXboxGamebar {
 	Write-Host "Disabling Xbox Gamebar..." -NoNewline
@@ -444,6 +549,8 @@ Function DisableXboxGamebar {
     Get-AppxPackage -AllUsers Microsoft.XboxGamingOverlay | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
+
+DisableXboxGamebar
 
 # Disable Xbox features - Not applicable to Server
 Function DisableXboxFeatures {
@@ -464,6 +571,8 @@ Function DisableXboxFeatures {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+DisableXboxFeatures
+
 # Disable blocking of downloaded files (i.e. storing zone information - no need to do File\Properties\Unblock) 
 Function DisableDownloadBlocking {
 	Write-Host "Disabling Blocking of Downloaded Files..." -NoNewline
@@ -474,12 +583,16 @@ Function DisableDownloadBlocking {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+DisableDownloadBlocking
+
 # File Explorer with 'This PC'
 Function FileExplorerWithThisPC {
 	Write-Host "Setting 'This PC' for File Explorer..." -NoNewline
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Type DWord -Value 1 #1 'This PC' #2 'Quick Access'
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
+
+FileExplorerWithThisPC
 
 # File Explorer Expand Ribbon
 Function FileExplorerExpandRibbon {
@@ -488,6 +601,8 @@ Function FileExplorerExpandRibbon {
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Ribbon" -Name "MinimizedStateTabletModeOff" -Type DWord -Value 0
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
+
+FileExplorerExpandRibbon
 
 # Disable nightly wake-up for Automatic Maintenance and Windows Updates 
 Function DisableMaintenanceWakeUp {
@@ -499,12 +614,16 @@ Function DisableMaintenanceWakeUp {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+DisableMaintenanceWakeUp
+
 # Disable Storage Sense - Applicable since 1703 NOT 
 Function DisableStorageSense {
 	Write-Host "Disabling Storage Sense..." -NoNewline
     Remove-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy" -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
+
+DisableStorageSense
 
 # Unpin all Start Menu tiles
 # Note: This function has no counterpart. You have to pin the tiles back manually. NOT 
@@ -579,6 +698,9 @@ function Configure-TaskbarPinningApp([string]$AppName, [string]$Verb) {
     
 function Remove-TaskbarPinningApp([string]$AppName) { Configure-TaskbarPinningApp $AppName "UnpinFromTaskbar" }
 
+#UnpinStartMenuTiles
+#Remove-TaskbarPinningApp
+
 # Disable built-in Adobe Flash in IE and Edge 
 Function DisableAdobeFlash {
 	Write-Host "Disabling Built-in Adobe Flash in IE and Edge..." -NoNewline
@@ -592,6 +714,8 @@ Function DisableAdobeFlash {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Addons" -Name "FlashPlayerEnabled" -Type DWord -Value 0
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
+
+DisableAdobeFlash
 
 # Disable Edge preload after Windows startup - Applicable since Win10 1809 
 Function DisableEdgePreload {
@@ -607,6 +731,8 @@ Function DisableEdgePreload {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+DisableEdgePreload
+
 # Disable Internet Explorer first run wizard 
 Function DisableIEFirstRun {
 	Write-Host "Disabling Internet Explorer First Run Wizard..." -NoNewline
@@ -616,6 +742,8 @@ Function DisableIEFirstRun {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Internet Explorer\Main" -Name "DisableFirstRunCustomize" -Type DWord -Value 1
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
+
+DisableIEFirstRun
 
 # Disable Windows Media Player online access - audio file metadata download, radio presets, DRM. 
 Function DisableMediaOnlineAccess {
@@ -633,12 +761,16 @@ Function DisableMediaOnlineAccess {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+DisableMediaOnlineAccess
+
 # Show known file extensions 
 Function ShowKnownExtensions {
 	Write-Host "Showing Known File Extensions..." -NoNewline
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWord -Value 0
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
+
+ShowKnownExtensions
 
 # Disable Action Center (Notification Center) 
 Function DisableActionCenter {
@@ -650,6 +782,8 @@ Function DisableActionCenter {
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
+
+DisableActionCenter
 
 # Disable System restore 
 Function DisableRestorePoints {
@@ -667,6 +801,8 @@ Function DisableRestorePoints {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+DisableRestorePoints
+
 # Lower UAC level (disabling it completely would break apps) 
 Function SetUACLow {
     Write-Host "Setting Low UAC Level..." -NoNewline
@@ -675,15 +811,16 @@ Function SetUACLow {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+SetUACLow
+
 # Fix Corrupt System Files
 Function Sfc {
     Write-Host "Fixing System Files..." -NoNewline
-    $progressPreference = 'SilentlyContinue'
-    DISM.exe /Online /Cleanup-image /Restorehealth *>$null
-    $progressPreference = 'SilentlyContinue'
-    Start-Process -FilePath "${env:Windir}\System32\SFC.EXE" -ArgumentList '/scannow' -Wait -NoNewWindow *>$null
-    Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
+    DISM.exe /Online /Cleanup-image /Restorehealth
+    Start-Process -FilePath "${env:Windir}\System32\SFC.EXE" -ArgumentList '/scannow' -Wait -NoNewWindow -ErrorAction SilentlyContinue
 }
+
+Sfc
 
 # Remove Tasks in Task Scheduler
 Function RemoveTasks {
@@ -724,6 +861,8 @@ Function RemoveTasks {
     Get-ScheduledTask -TaskName "*XblGameSaveTaskLogon*" | Disable-ScheduledTask -ea 0 | Out-Null
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+RemoveTasks
 
 # Disk cleanup 
 Function DiskClean {
@@ -971,6 +1110,8 @@ Function DiskClean {
     }
 }
 
+DiskClean
+
 # Disable Scheduled Defragmentation Task 
 Function DisableDefragmentation {
     Write-Host "Disabling Scheduled Defragmentation..." -NoNewline
@@ -978,6 +1119,8 @@ Function DisableDefragmentation {
     Schtasks /Delete /TN "\Microsoft\Windows\Defrag\ScheduledDefrag" /F *>$null
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+DisableDefragmentation
 
 # Enable clearing of recent files on exit 
 # Empties most recently used (MRU) items lists such as 'Recent Items' menu on the Start menu, jump lists, and shortcuts at the bottom of the 'File' menu in applications during every logout.
@@ -990,6 +1133,8 @@ Function EnableClearRecentFiles {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+EnableClearRecentFiles
+
 # Disable recent files lists 
 # Stops creating most recently used (MRU) items lists such as 'Recent Items' menu on the Start menu, jump lists, and shortcuts at the bottom of the 'File' menu in applications.
 Function DisableRecentFiles {
@@ -1001,6 +1146,8 @@ Function DisableRecentFiles {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableRecentFiles
+
 # Disable search for app in store for unknown extensions
 Function DisableSearchAppInStore {
 	Write-Host "Disabling Search for App in Store for Unknown Extensions..." -NoNewline
@@ -1011,6 +1158,8 @@ Function DisableSearchAppInStore {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableSearchAppInStore
+
 # Hide 'Recently added' list from the Start Menu
 Function HideRecentlyAddedApps {
 	Write-Host "Hiding 'Recently added' List from the Start Menu..." -NoNewline
@@ -1020,6 +1169,8 @@ Function HideRecentlyAddedApps {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "HideRecentlyAddedApps" -Type DWord -Value 1
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+HideRecentlyAddedApps
 
 Function DisableServices {
 	Write-Host "Stop and Disabling Unnecessary Services..." -NoNewline
@@ -1147,6 +1298,8 @@ Function DisableServices {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableServices
+
 #Set Wallpaper
 Function SetWallpaper {
 	Write-Host "Setting Desktop Wallpaper..." -NoNewline
@@ -1155,6 +1308,8 @@ Function SetWallpaper {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+SetWallpaper
+
 # Always show all icons in the notification area and remove icons
 Function ShowAllIcons {
 	Write-Host "Show All Icons on Taskbar..." -NoNewline  
@@ -1162,6 +1317,8 @@ Function ShowAllIcons {
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "HideSCAMeetNow" -Value 1  -ErrorAction SilentlyContinue
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+ShowAllIcons
 
 #Copy Files to Documents
 Function CopyFiles {
@@ -1172,6 +1329,8 @@ Function CopyFiles {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
 
+CopyFiles
+
 #Import Batch to Startup
 Function ImportStartup {
 	Write-Host "Importing Startup task in Task Scheduler..." -NoNewline
@@ -1181,6 +1340,13 @@ Function ImportStartup {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+ImportStartup
+
+}
+else {
+    Write-Host "[System Settings Cancelled]" -ForegroundColor Red -BackgroundColor Black
+}
+
 ##########
 #endregion System Settings
 ##########
@@ -1188,6 +1354,13 @@ Function ImportStartup {
 ##########
 #region Privacy Settings
 ##########
+
+Write-Host `n"Do you want " -NoNewline
+Write-Host "Privacy Settings?" -ForegroundColor Yellow -NoNewline
+Write-Host "(y/n): " -ForegroundColor Green -NoNewline
+$privacyset = Read-Host
+
+if ($privacyset -match "[Yy]") {
 
 # Disable Telemetry 
 Function DisableTelemetry {
@@ -1266,6 +1439,8 @@ Function DisableTelemetry {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableTelemetry
+
 # Block Telemetry Url's to host file
 Function AddTelemetryHost {
 	Write-Host "Blocking Telemetry in Host File..." -NoNewline
@@ -1319,6 +1494,8 @@ Function AddTelemetryHost {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+AddTelemetryHost
+
 # Disable Feedback 
 Function DisableFeedback {
 	Write-Host "Disabling Feedback..." -NoNewline
@@ -1332,6 +1509,8 @@ Function DisableFeedback {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableFeedback
+
 # Disable Activity History feed in Task View 
 Function DisableActivityHistory {
 	Write-Host "Disabling Activity History..." -NoNewline
@@ -1341,12 +1520,16 @@ Function DisableActivityHistory {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableActivityHistory
+
 # Disable setting 'Let websites provide locally relevant content by accessing my language list' 
 Function DisableWebLangList {
 	Write-Host "Disabling Website Access to Language List..." -NoNewline
 	Set-ItemProperty -Path "HKCU:\Control Panel\International\User Profile" -Name "HttpAcceptLanguageOptOut" -Type DWord -Value 1
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableWebLangList
 
 # Stop and disable Connected User Experiences and Telemetry (previously named Diagnostics Tracking Service)
 Function DisableDiagTrack {
@@ -1355,6 +1538,8 @@ Function DisableDiagTrack {
 	Set-Service "DiagTrack" -StartupType Disabled
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableDiagTrack
 
 # Disable Advertising ID 
 Function DisableAdvertisingID {
@@ -1365,6 +1550,8 @@ Function DisableAdvertisingID {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Name "DisabledByGroupPolicy" -Type DWord -Value 1
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableAdvertisingID
 
 # Disable Wi-Fi Sense
 Function DisableWiFiSense {
@@ -1384,6 +1571,8 @@ Function DisableWiFiSense {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config" -Name "WiFISenseAllowed" -Type DWord -Value 0
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableWiFiSense
 
 # Disable Application suggestions and automatic installation
 Function DisableAppSuggestions {
@@ -1420,6 +1609,8 @@ Function DisableAppSuggestions {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableAppSuggestions
+
 # Disable UWP apps background access - ie. if UWP apps can download data or update themselves when they aren't used
 Function DisableUWPBackgroundApps {
 	Write-Host "Disabling UWP Apps Background Access..." -NoNewline
@@ -1437,6 +1628,8 @@ Function DisableUWPBackgroundApps {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUWPBackgroundApps
+
 # Disable access to voice activation from UWP apps
 Function DisableUWPVoiceActivation {
 	Write-Host "Disabling Access to Voice Activation from UWP Apps..." -NoNewline
@@ -1448,6 +1641,8 @@ Function DisableUWPVoiceActivation {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUWPVoiceActivation
+
 # Disable access to notifications from UWP apps
 Function DisableUWPNotifications {
 	Write-Host "Disabling Access to Notifications from UWP Apps..." -NoNewline
@@ -1457,6 +1652,8 @@ Function DisableUWPNotifications {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy" -Name "LetAppsAccessNotifications" -Type DWord -Value 2
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableUWPNotifications
 
 # Disable access to account info from UWP apps
 Function DisableUWPAccountInfo {
@@ -1468,6 +1665,8 @@ Function DisableUWPAccountInfo {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUWPAccountInfo
+
 # Disable access to contacts from UWP apps
 Function DisableUWPContacts {
 	Write-Host "Disabling Access to Contacts from UWP Apps..." -NoNewline
@@ -1477,6 +1676,8 @@ Function DisableUWPContacts {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy" -Name "LetAppsAccessContacts" -Type DWord -Value 2
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableUWPContacts
 
 # Disable access to calendar from UWP apps
 Function DisableUWPCalendar {
@@ -1488,6 +1689,8 @@ Function DisableUWPCalendar {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUWPCalendar
+
 # Disable access to phone calls from UWP apps
 Function DisableUWPPhoneCalls {
 	Write-Host "Disabling Access to Phone Calls from UWP Apps..." -NoNewline
@@ -1497,6 +1700,8 @@ Function DisableUWPPhoneCalls {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy" -Name "LetAppsAccessPhone" -Type DWord -Value 2
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableUWPPhoneCalls
 
 # Disable access to call history from UWP apps
 Function DisableUWPCallHistory {
@@ -1508,6 +1713,8 @@ Function DisableUWPCallHistory {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUWPCallHistory
+
 # Disable access to email from UWP apps
 Function DisableUWPEmail {
 	Write-Host "Disabling Access to Email from UWP Apps..." -NoNewline
@@ -1517,6 +1724,8 @@ Function DisableUWPEmail {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy" -Name "LetAppsAccessEmail" -Type DWord -Value 2
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableUWPEmail
 
 # Disable access to tasks from UWP apps
 Function DisableUWPTasks {
@@ -1528,6 +1737,8 @@ Function DisableUWPTasks {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUWPTasks
+
 # Disable access to messaging (SMS, MMS) from UWP apps
 Function DisableUWPMessaging {
 	Write-Host "Disabling Access to Messaging from UWP Apps..." -NoNewline
@@ -1537,6 +1748,8 @@ Function DisableUWPMessaging {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy" -Name "LetAppsAccessMessaging" -Type DWord -Value 2
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableUWPMessaging
 
 # Disable access to radios (e.g. Bluetooth) from UWP apps
 Function DisableUWPRadios {
@@ -1548,6 +1761,8 @@ Function DisableUWPRadios {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUWPRadios
+
 # Disable access to other devices (unpaired, beacons, TVs etc.) from UWP apps
 Function DisableUWPOtherDevices {
 	Write-Host "Disabling Access to Other Devices from UWP Apps..." -NoNewline
@@ -1557,6 +1772,8 @@ Function DisableUWPOtherDevices {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy" -Name "LetAppsSyncWithDevices" -Type DWord -Value 2
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableUWPOtherDevices
 
 # Disable access to diagnostic information from UWP apps
 Function DisableUWPDiagInfo {
@@ -1568,6 +1785,8 @@ Function DisableUWPDiagInfo {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUWPDiagInfo
+
 # Disable access to libraries and file system from UWP apps
 Function DisableUWPFileSystem {
 	Write-Host "Disabling Access to Libraries and File System from UWP Apps..." -NoNewline
@@ -1578,6 +1797,8 @@ Function DisableUWPFileSystem {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUWPFileSystem
+
 # Disable UWP apps swap file
 # This disables creation and use of swapfile.sys and frees 256 MB of disk space. Swapfile.sys is used only by UWP apps. The tweak has no effect on the real swap in pagefile.sys.
 Function DisableUWPSwapFile {
@@ -1586,12 +1807,16 @@ Function DisableUWPSwapFile {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUWPSwapFile
+
 # Disable automatic Maps updates 
 Function DisableMapUpdates {
 	Write-Host "Disabling Automatic Maps Updates..." -NoNewline
 	Set-ItemProperty -Path "HKLM:\SYSTEM\Maps" -Name "AutoUpdateEnabled" -Type DWord -Value 0
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableMapUpdates
 
 # Disable automatic restart after Windows Update installation
 # The tweak is slightly experimental, as it registers a dummy debugger for MusNotification.exe
@@ -1605,6 +1830,8 @@ Function DisableUpdateRestart {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUpdateRestart
+
 # Disable Windows Update automatic downloads 
 Function DisableUpdateAutoDownload {
 	Write-Host "Disabling Windows Update Automatic Downloads..." -NoNewline
@@ -1615,6 +1842,13 @@ Function DisableUpdateAutoDownload {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+DisableUpdateAutoDownload
+
+}
+else {
+    Write-Host "[Privacy Settings Cancelled]" -ForegroundColor Red -BackgroundColor Black
+}
+
 ##########
 #endregion Privacy Settings
 ##########
@@ -1623,150 +1857,171 @@ Function DisableUpdateAutoDownload {
 #region Remove Unused Apps/Softwares
 ##########
 
+Write-Host `n"Do you want " -NoNewline
+Write-Host "Uninstall Unused Apps & Softwares?" -ForegroundColor Yellow -NoNewline
+Write-Host "(y/n): " -ForegroundColor Green -NoNewline
+$removeapps = Read-Host
+
+if ($removeapps -match "[Yy]") {
+
 # Remove Apps 
 Function UninstallThirdPartyBloat {
     Write-Host `n"---------Remove Unused Apps/Softwares" -ForegroundColor Blue -BackgroundColor Black
 
 	Write-Host `n"Uninstalling Default Third Party Applications..." -NoNewline
-    $progressPreference = 'silentlyContinue'
-    Get-AppxPackage -AllUsers Microsoft.WindowsAlarms | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -Allusers Microsoft.AppConnector | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Cortana | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -Allusers Microsoft.549981C3F5F10 | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.YourPhone | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Edge| Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.BingFinance | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.BingFoodAndDrink | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.BingHealthAndFitness | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.BingMaps | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.BingNews | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.BingSports | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.BingTranslator | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.BingTravel | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.BingWeather | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsFeedbackHub| Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.GetHelp| Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.3DBuilder | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.MicrosoftOfficeHub | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *Skype* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Getstarted | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsZuneMusic | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.ZuneMusic | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsMaps | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -Allusers Microsoft.Skydrive | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *messaging* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.MicrosoftSolitaireCollection | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsZuneVideo | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.ZuneVideo | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Office.OneNote | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.OneConnect | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.People | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsPhone | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Windows.Photos | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Reader | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Office.Sway | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.SoundRecorder | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.XboxApp | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *ACG* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *CandyCrush* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *Facebook* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *Plex* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *Spotify* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *Twitter* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *Viber* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *3d* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *comm* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *mess* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.CommsPhone | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.ConnectivityStore | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.FreshPaint | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.GetHelp | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Getstarted | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.HelpAndTips | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Media.PlayReadyClient.2 | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Messaging | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Microsoft3DViewer | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.MicrosoftOfficeHub | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.MicrosoftPowerBIForWindows | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.MicrosoftSolitaireCollection | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.MinecraftUWP | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.MixedReality.Portal | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.MoCamera | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.MSPaint | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.NetworkSpeedTest | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.OfficeLens | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Office.OneNote | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Office.Sway | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.OneConnect | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.People | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Print3D | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Reader | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.SkypeApp | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Todos | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Wallet | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WebMediaExtensions | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Whiteboard | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsAlarms | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers microsoft.windowscommunicationsapps | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsFeedbackHub | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsMaps | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsPhone | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Windows.Photos | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsReadingList | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsScan | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WindowsSoundRecorder | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WinJS.1.0 | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.WinJS.2.0 | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.YourPhone | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.ZuneMusic | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.ZuneVideo | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers Microsoft.Advertising.Xaml | Remove-AppxPackage  | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers *Microsoft.ScreenSketch*  | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-    Get-AppxPackage "2414FC7A.Viber" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "41038Axilesoft.ACGMediaPlayer" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "46928bounde.EclipseManager" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "4DF9E0F8.Netflix" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "64885BlueEdge.OneCalendar" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "7EE7776C.LinkedInforWindows" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "828B5831.HiddenCityMysteryofShadows" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "89006A2E.AutodeskSketchBook" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "9E2F88E3.Twitter" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "A278AB0D.DisneyMagicKingdoms" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "A278AB0D.DragonManiaLegends" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "A278AB0D.MarchofEmpires" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "ActiproSoftwareLLC.562882FEEB491" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "AD2F1837.GettingStartedwithWindows8" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "AD2F1837.HPJumpStart" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "AD2F1837.HPRegistration" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "AdobeSystemsIncorporated.AdobePhotoshopExpress" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "Amazon.com.Amazon" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "C27EB4BA.DropboxOEM" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "CAF9E577.Plex" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "CyberLinkCorp.hs.PowerMediaPlayer14forHPConsumerPC" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "D52A8D61.FarmVille2CountryEscape" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "D5EA27B7.Duolingo-LearnLanguagesforFree" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "DB6EA5DB.CyberLinkMediaSuiteEssentials" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "DolbyLaboratories.DolbyAccess" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "Drawboard.DrawboardPDF" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "Facebook.Facebook" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "Fitbit.FitbitCoach" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "flaregamesGmbH.RoyalRevolt2" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "GAMELOFTSA.Asphalt8Airborne" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "KeeperSecurityInc.Keeper" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "king.com.BubbleWitch3Saga" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "king.com.CandyCrushFriends" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "king.com.CandyCrushSaga" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "king.com.CandyCrushSodaSaga" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "king.com.FarmHeroesSaga" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "Nordcurrent.CookingFever" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "PandoraMediaInc.29680B314EFC2" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "PricelinePartnerNetwork.Booking.comBigsavingsonhot" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "SpotifyAB.SpotifyMusic" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "ThumbmunkeysLtd.PhototasticCollage" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "WinZipComputing.WinZipUniversal" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
-	Get-AppxPackage "XINGAG.XING" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.WindowsAlarms | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -Allusers Microsoft.AppConnector | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Cortana | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -Allusers Microsoft.549981C3F5F10 | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.YourPhone | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Edge| Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.BingFinance | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.BingFoodAndDrink | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.BingHealthAndFitness | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.BingMaps | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.BingNews | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.BingSports | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.BingTranslator | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.BingTravel | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.BingWeather | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.WindowsFeedbackHub| Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.GetHelp| Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.3DBuilder | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.MicrosoftOfficeHub | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers *Skype* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Getstarted | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WindowsZuneMusic | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.ZuneMusic | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WindowsMaps | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -Allusers Microsoft.Skydrive | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *messaging* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.MicrosoftSolitaireCollection | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WindowsZuneVideo | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.ZuneVideo | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Office.OneNote | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.OneConnect | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.People | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WindowsPhone | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    $progressPreference = 'SilentlyContinue'
+    Get-AppxPackage -AllUsers Microsoft.Windows.Photos | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Reader | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Office.Sway | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.SoundRecorder | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.XboxApp | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *ACG* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *CandyCrush* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *Facebook* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *Plex* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *Spotify* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *Twitter* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *Viber* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *3d* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *comm* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *mess* | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.CommsPhone | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.ConnectivityStore | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.FreshPaint | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.GetHelp | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Getstarted | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.HelpAndTips | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Media.PlayReadyClient.2 | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Messaging | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Microsoft3DViewer | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.MicrosoftOfficeHub | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.MicrosoftPowerBIForWindows | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.MicrosoftSolitaireCollection | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.MinecraftUWP | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.MixedReality.Portal | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.MoCamera | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.MSPaint | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.NetworkSpeedTest | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.OfficeLens | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Office.OneNote | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Office.Sway | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.OneConnect | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.People | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Print3D | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Reader | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Todos | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Wallet | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WebMediaExtensions | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Whiteboard | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WindowsAlarms | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers microsoft.windowscommunicationsapps | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WindowsFeedbackHub | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WindowsMaps | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WindowsPhone | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Windows.Photos | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WindowsReadingList | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WindowsScan | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WindowsSoundRecorder | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WinJS.1.0 | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.WinJS.2.0 | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.YourPhone | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.ZuneMusic | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.ZuneVideo | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers Microsoft.Advertising.Xaml | Remove-AppxPackage  | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage -AllUsers *Microsoft.ScreenSketch*  | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+    Get-AppxPackage "2414FC7A.Viber" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "41038Axilesoft.ACGMediaPlayer" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "46928bounde.EclipseManager" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "4DF9E0F8.Netflix" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "64885BlueEdge.OneCalendar" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "7EE7776C.LinkedInforWindows" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "828B5831.HiddenCityMysteryofShadows" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "89006A2E.AutodeskSketchBook" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "9E2F88E3.Twitter" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "A278AB0D.DisneyMagicKingdoms" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "A278AB0D.DragonManiaLegends" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "A278AB0D.MarchofEmpires" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "ActiproSoftwareLLC.562882FEEB491" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "AD2F1837.GettingStartedwithWindows8" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "AD2F1837.HPJumpStart" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "AD2F1837.HPRegistration" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "AdobeSystemsIncorporated.AdobePhotoshopExpress" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "Amazon.com.Amazon" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "C27EB4BA.DropboxOEM" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "CAF9E577.Plex" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "CyberLinkCorp.hs.PowerMediaPlayer14forHPConsumerPC" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "D52A8D61.FarmVille2CountryEscape" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "D5EA27B7.Duolingo-LearnLanguagesforFree" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "DB6EA5DB.CyberLinkMediaSuiteEssentials" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "DolbyLaboratories.DolbyAccess" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "Drawboard.DrawboardPDF" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "Facebook.Facebook" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "Fitbit.FitbitCoach" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "flaregamesGmbH.RoyalRevolt2" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "GAMELOFTSA.Asphalt8Airborne" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "KeeperSecurityInc.Keeper" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "king.com.BubbleWitch3Saga" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "king.com.CandyCrushFriends" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "king.com.CandyCrushSaga" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "king.com.CandyCrushSodaSaga" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "king.com.FarmHeroesSaga" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "Nordcurrent.CookingFever" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "PandoraMediaInc.29680B314EFC2" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "PricelinePartnerNetwork.Booking.comBigsavingsonhot" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "SpotifyAB.SpotifyMusic" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "ThumbmunkeysLtd.PhototasticCollage" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "WinZipComputing.WinZipUniversal" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
+	Get-AppxPackage "XINGAG.XING" | Remove-AppxPackage | Out-Null -ErrorAction SilentlyContinue *>$null
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
+
+UninstallThirdPartyBloat
 
 # Uninstall Windows Media Player
 Function UninstallMediaPlayer {
@@ -1777,6 +2032,8 @@ Function UninstallMediaPlayer {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+#UninstallMediaPlayer
+
 # Uninstall Work Folders Client - Not applicable to Server
 Function UninstallWorkFolders {
 	Write-Host "Uninstalling Work Folders Client..." -NoNewline
@@ -1785,6 +2042,8 @@ Function UninstallWorkFolders {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+UninstallWorkFolders
+
 # Uninstall Microsoft XPS Document Writer 
 Function UninstallXPSPrinter {
 	Write-Host "Uninstalling Microsoft XPS Document Writer..." -NoNewline
@@ -1792,12 +2051,16 @@ Function UninstallXPSPrinter {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+UninstallXPSPrinter
+
 # Remove Default Fax Printer 
 Function RemoveFaxPrinter {
 	Write-Host "Removing Default Fax Printer..." -NoNewline
 	Remove-Printer -Name "Fax" -ErrorAction SilentlyContinue
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+RemoveFaxPrinter
 
 # Disable OneDrive
 Function DisableOneDrive {
@@ -1808,6 +2071,8 @@ Function DisableOneDrive {
 	Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Type DWord -Value 1
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
+
+DisableOneDrive
 
 Function UninstallOneDrive {
 $TeamsPath = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'Microsoft', 'Teams')
@@ -1834,6 +2099,9 @@ catch
     exit /b 1
 }
 }
+
+UninstallOneDrive
+
 # Disable Edge desktop shortcut creation after certain Windows updates are applied 
 Function UninstallEdge {
 	Write-Host "Removing Microsoft Edge..." -NoNewline
@@ -1844,6 +2112,8 @@ Function UninstallEdge {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black  
 }
 
+UninstallEdge
+
 # Uninstall Windows Fax and Scan Services - Not applicable to Server
 Function UninstallFaxAndScan {
 	Write-Host "Uninstalling Windows Fax and Scan Services..." -NoNewline
@@ -1853,39 +2123,19 @@ Function UninstallFaxAndScan {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
-##########
-#endregion Remove Download Unused
-##########
+UninstallFaxAndScan
 
-##########
-#region Install Software
-##########
-
-# Install Winget for Windows 10*>$null  
-
-Function Winget {
-    Write-Host "Installing Winget for Windows 10..." -NoNewline
-	$hasPackageManager = Get-AppPackage -name "Microsoft.DesktopAppInstaller"
-    $progressPreference = 'SilentlyContinue'
-	Add-AppxPackage -Path "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx" *>$null
-	$releases_url = "https://api.github.com/repos/microsoft/winget-cli/releases/latest"
-	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-	$releases = Invoke-RestMethod -uri "$($releases_url)"
-	$latestRelease = $releases.assets | Where { $_.browser_download_url.EndsWith("msixbundle") } | Select -First 1
-    $progressPreference = 'SilentlyContinue'
-	Add-AppxPackage -Path $latestRelease.browser_download_url *>$null
-    Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
 }
-
-# Install Browser 
-Function InstallSoftwares {
-    Write-Host "Installing Latest Version Brave Browser..." -NoNewline
-    cd 'C:\already-system-main\files\Software\'
-    & '.\BraveLatest Setup.exe'
-    Start-Sleep -Seconds 30
-    Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
+else {
+    Write-Host "[The Process Cancelled]" -ForegroundColor Red -BackgroundColor Black
 }
 
 ##########
-#endregion Install Software
+#endregion Remove Unused Apps/Softwares
 ##########
+
+Function Restart {
+cmd.exe /c "shutdown /r /t 0"
+}
+
+Restart
