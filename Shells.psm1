@@ -1266,6 +1266,7 @@ Function DisableTelemetry {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black 
 }
 
+# Block Telemetry Url's to host file
 Function AddTelemetryHost {
 	Write-Host "Blocking Telemetry in Host File..." -NoNewline
     $file = "C:\Windows\System32\drivers\etc\hosts"
