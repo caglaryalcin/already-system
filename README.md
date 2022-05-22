@@ -1,10 +1,10 @@
 ## Description
 
-If you're already using a system on windows 10-11, you can run this script.
+If you new formatted your computer on Windows 10-11, you can run this script.
 
 After downloading the [zip](https://github.com/caglaryalcin/already-system/archive/refs/heads/main.zip) file, move the 'already-system-main' folder inside the zip to 'C:\'. Then double click(don't right click and 'run as administrator') on 'Run.cmd' confirm User Account Control prompt. Make sure your account is a member of Administrators group as the script attempts to run with elevated privileges.
 
-This script does exactly the following;
+This script does exactly the following; (You can optionally reply(y/n) to groups)
 
 <details><summary>System Settings</summary>&nbsp;
   
@@ -16,6 +16,7 @@ This script does exactly the following;
 - Setting Dark Mode for System
 - Setting Control Panel View to Large Icons
 - Enabling NumLock After Startup
+- Hostname is set to 'm4a1'
 - Disabling Windows Beep Sound
 - Disabling IPv6 stack
 - Disabling Startup Apps
@@ -45,6 +46,7 @@ This script does exactly the following;
 - Expanding for File Explorer
 - Disabling Nightly Wake-up for Automatic Maintenance
 - Disabling Storage Sense
+- Unpinning all Start Menu tiles
 - Disabling Built-in Adobe Flash in IE and Edge
 - Disabling Edge Preload
 - Disabling Internet Explorer First Run Wizard
@@ -53,15 +55,13 @@ This script does exactly the following;
 - Disabling Action Center (Notification Center)
 - Disabling System Restore for System Drive
 - Setting Low UAC Level
-- Fixing System Files
 - Removing Unnecessary Tasks
-- Disk Cleaning
-- Disabling Scheduled Defragmentation
 - Enabling Clearing of Recent Files on Exit
 - Disabling Recent Files Lists
 - Disabling Search for App in Store for Unknown Extensions
 - Hiding 'Recently added' List from the Start Menu
 - Stopping and Disabling Unnecessary Services
+- Setting Desktop Wallpaper
 - Show All Icons on Taskbar
 - Copy Files to Documents
 - Importing Startup task in Task Scheduler
@@ -108,37 +108,28 @@ This script does exactly the following;
 - Removing Microsoft Edge
 - Uninstalling Windows Fax and Scan Services
 </details>
-<details><summary>Install Softwares</summary>&nbsp;
-
-- [Installing WinGet for Windows 10](https://github.com/caglaryalcin/after-format/blob/main/README.md#startup-script)
-</details>
   
 > **_NOTE 1:_** Before executing the script, add # at the beginning of the line you don't want from file 'Functions.Preset'.
 
-> **_NOTE 2:_** All the script is all set to path 'C:\', so file 'already-system-main' must be inside 'C:\'.
-  
-> **_NOTE 3:_** After run this script, you can check useful tools from in Documents.
-  
+> **_NOTE 2:_** All the script is all set to path 'C:\', so file 'already-system-main' must be inside 'C:\'.  
 
 <p>
 
 ### Startup Script
   
-You can use just startup script too, follow the instructions below.
-After downloading the [zip](https://github.com/caglaryalcin/already-system/archive/refs/heads/main.zip) file, move the 'already-system-main\files\startup' folder inside the zip to 'C:\'. Then double click(don't right click and 'run as administrator') on 'Run.cmd' confirm User Account Control prompt. Make sure your account is a member of Administrators group as the script attempts to run with elevated privileges.
+There is another script called startup in the script.
 
 This script does exactly the following;
 - Importing Previously Set Task to Task Scheduler
-- Removing Secondary en-US Keyboard
-- Adding tr-TR Keyboard
 - Removing Stick Keys
 - Removing Toggle Keys
 - Remove Unnecessary Tasks(update and such) in Task Scheduler.(It also adds task to delete Unnecessary Tasks on every boot)
-- Deleting Windows Defender History
 - Sync Windows Localtime
 - Update apps (browsers, apps, softwares and such..) with WinGet&nbsp;
   
-  If you don't want to use WinGet, you can as below edit 'run.vbs' file in startup folder.
+> **_NOTE 1:_** You can put '#' at the beginning of the functions you want to add or remove in the functions.preset file in 'C:\after-format-main\files\startup' folder.
+  
+  If you don't want to use startup updates, you can as below edit 'run.vbs' file in 'C:\after-format-main\files\startup' folder.
 ```vbs
 Set WshShell = CreateObject("WScript.Shell") 
 WshShell.Run chr(34) & "C:\startup\Run.cmd" & Chr(34), 0
