@@ -1,4 +1,4 @@
-![Alt Text](https://github.com/caglaryalcin/already-system/blob/main/files/flx.gif)
+![Alt Text](https://github.com/caglaryalcin/media/blob/main/flx.gif)
 
 ## Description
 
